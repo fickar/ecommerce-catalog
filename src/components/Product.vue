@@ -1,0 +1,532 @@
+<template>
+    <div class="container">
+      <div v-if="isLoading" class="card">
+        <div class="product-container">
+          <div class="loader-container">
+            <div class="loader"></div>
+          </div>
+        </div>
+      </div>
+      <div
+        v-else
+        class="container"
+        :class="
+          !isProductAvailable
+            ? 'bg-light-gray'
+            : product.data.category === 'men\'s clothing'
+            ? 'bg-light-blue'
+            : 'bg-light-pink'
+        "
+      >
+        <div class="overlay">
+          <img src="../assets/bg-shape.svg" alt="background overlay" />
+        </div>
+        <div class="card">
+          <div v-if="!isProductAvailable" class="product-unavailable">
+            <div class="overlay">
+              <img
+                src="../assets/bg-sad.svg"
+                alt="unavailable product"
+                srcset=""
+              />
+            </div>
+            <div class="product-details">
+              <p>This product is unavailable to show</p>
+              <div class="button-container">
+                <button
+                  type="button"
+                  @click="getSingleProduct()"
+                  class="btn-next"
+                >
+                  Next Product
+                </button>
+              </div>
+            </div>
+          </div>
+          <div v-else class="product-container">
+            <div class="product-image">
+              <img :src="product.data.image" alt="" />
+            </div>
+            <div class="product-details">
+              <div class="product-title">
+                <h3
+                  :class="
+                    product.data.category === 'men\'s clothing'
+                      ? 'font-navy'
+                      : 'font-pink-dark'
+                  "
+                  class="title"
+                >
+                  {{ product.data.title }}
+                </h3>
+                <div class="product-sub-title">
+                  <span>{{ product.data.category }}</span>
+                  <div class="rating">
+                    <span>{{ product.data.rating.rate }}/5</span>
+                    <div class="rating">
+                      <span
+                        :class="
+                          product.data.category === 'men\'s clothing'
+                            ? 'bg-navy'
+                            : 'bg-pink-dark'
+                        "
+                        class="circle full"
+                      ></span>
+                      <span
+                        :class="
+                          product.data.category === 'men\'s clothing'
+                            ? 'bg-navy'
+                            : 'bg-pink-dark'
+                        "
+                        class="circle full"
+                      ></span>
+                      <span
+                        :class="
+                          product.data.category === 'men\'s clothing'
+                            ? 'bg-navy'
+                            : 'bg-pink-dark'
+                        "
+                        class="circle full"
+                      ></span>
+                      <span
+                        :class="
+                          product.data.category === 'men\'s clothing'
+                            ? 'bg-navy'
+                            : 'bg-pink-dark'
+                        "
+                        class="circle full"
+                      ></span>
+                      <span
+                        :class="
+                          product.data.category === 'men\'s clothing'
+                            ? 'border-navy'
+                            : 'border-pink-dark'
+                        "
+                        class="circle full"
+                      ></span>
+                    </div>
+                  </div>
+                </div>
+                <div class="description">
+                  <p>{{ product.data.description }}</p>
+                </div>
+              </div>
+              <div class="price-color">
+                <span
+                  :class="
+                    product.data.category === 'men\'s clothing'
+                      ? 'font-navy'
+                      : 'font-pink-dark'
+                  "
+                  class="price"
+                  >${{ product.data.price }}</span
+                >
+                <div class="button-container">
+                  <button
+                    type="button"
+                    :class="
+                      product.data.category === 'men\'s clothing'
+                        ? 'bg-navy'
+                        : 'bg-pink-dark'
+                    "
+                    class="btn-buy"
+                  >
+                    Buy Now
+                  </button>
+                  <button
+                    type="button"
+                    @click="getSingleProduct()"
+                    :class="
+                      product.data.category === 'men\'s clothing'
+                        ? 'border-btn-navy font-navy'
+                        : 'border-btn-pink-dark font-pink-dark'
+                    "
+                    class="btn-next"
+                  >
+                    Next Product
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </template>
+  <script>
+  export default {
+    name: 'ProductDisplay',
+    data () {
+      return {
+        isLoading: false,
+        index: 0,
+        isProductAvailable: false,
+        product: {}
+      }
+    },
+    methods: {
+      async callAPI () {
+        const response = await fetch(
+          `https://fakestoreapi.com/products/${this.index}`
+        )
+        const result = await response.json()
+        console.log(result)
+        return result
+      },
+      async getSingleProduct () {
+        this.isLoading = true
+  
+        this.index == 20 ? (this.index = 1) : this.index++
+  
+        let data = await this.callAPI()
+        if (
+          data.category === "men's clothing" ||
+          data.category === "women's clothing"
+        ) {
+          this.product = { data }
+          this.isProductAvailable = true
+        } else {
+          this.isProductAvailable = false
+        }
+  
+        this.isLoading = false
+      }
+    },
+    mounted () {
+      this.getSingleProduct()
+    }
+  }
+  </script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap');
+* {
+      margin: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', sans-serif;
+}
+
+:root {
+      --navy: #002772;
+      --light-pink: #fde2ff;
+      --black: #1e1e1e;
+      --pink-dark: #720060;
+      --light-blue: #d6e6ff;
+      --gray: #3f3f3f;
+      --light-gray: #dcdcdc;
+      --white: #ffffff;
+}
+
+.container {
+      position: relative;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: #ffffff;
+}
+
+.overlay {
+      position: absolute;
+      z-index: 1;
+      top: -12%;
+      left: 0;
+      width: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
+
+.overlay>img {
+      width: 90%;
+}
+
+.card {
+      display: flex;
+      position: relative;
+      z-index: 2;
+      width: 90%;
+      height: 90vh !important;
+      background-color: var(--white);
+      border-radius: 10px;
+      padding: 48px 32px;
+      box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+}
+
+
+/* Loader */
+.loader-container {
+      width: 100%;
+      height: 100%;
+      background-color: var(--light-gray);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      border-radius: 10px;
+}
+
+.loader {
+      border: 10px solid var(--light-blue);
+      border-radius: 50%;
+      border-top: 10px solid var(--gray);
+      width: 60px;
+      height: 60px;
+      -webkit-animation: spin 5s linear infinite;
+      /* Safari */
+      animation: spin 1s linear infinite;
+}
+
+/* Safari */
+@-webkit-keyframes spin {
+      0% {
+            -webkit-transform: rotate(0deg);
+      }
+
+      100% {
+            -webkit-transform: rotate(360deg);
+      }
+}
+
+@keyframes spin {
+      0% {
+            transform: rotate(0deg);
+      }
+
+      100% {
+            transform: rotate(360deg);
+      }
+}
+
+/* unavailable product */
+.product-unavailable {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      flex-direction: column;
+}
+
+.product-unavailable>.overlay {
+      top: 10%;
+      left: 5%;
+}
+
+.product-unavailable>.product-details {
+      text-align: center;
+      z-index: 2;
+}
+
+.product-unavailable .btn-next {
+      margin: 0px auto;
+      border: 2px solid black;
+      color: black;
+      border-radius: 5px;
+}
+
+/* available product */
+.product-container {
+      width: 100%;
+      display: flex;
+      gap: 16px;
+      height: 100%;
+}
+
+.product-image {
+      width: 30%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+}
+
+.product-image>img {
+      width: 80%;
+}
+
+.product-details {
+      width: 65%;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+}
+
+.product-details .title {
+      font-size: 32px;
+      font-weight: 600;
+}
+
+.product-details .product-sub-title {
+      display: flex;
+      width: 98%;
+      justify-content: space-between;
+      margin-top: 14px;
+      font-size: 16px;
+      color: var(--gray);
+      padding-bottom: 16px;
+      border-bottom: 1px solid var(--light-gray);
+}
+
+.product-details .rating {
+      display: flex;
+      gap: 3px;
+      align-items: center;
+}
+
+.rating>.full {
+      display: block;
+      width: 14px;
+      height: 14px;
+      border-radius: 100%;
+}
+
+.rating>.circle {
+      display: block;
+      width: 14px;
+      height: 14px;
+      border-radius: 100%;
+}
+
+.product-details .description {
+      width: 100%;
+      margin-top: 24px;
+      font-size: 16px;
+      color: var(--black);
+}
+
+.product-details>.price-color {
+      width: 98%;
+      padding-top: 16px;
+      border-top: 1px solid var(--light-gray);
+}
+
+.product-details .price {
+      font-size: 32px;
+      font-weight: 600;
+}
+
+/* general */
+.button-container {
+      margin-top: 16px;
+      width: 100%;
+      display: flex;
+      gap: 12px;
+}
+
+.button-container>.btn-buy,
+.button-container>.btn-next {
+      width: 48%;
+      height: 36px;
+      font-size: 16px;
+      border-radius: 3px;
+      font-weight: bold;
+      cursor: pointer;
+}
+
+.button-container>.btn-buy {
+      color: var(--white);
+      border: none;
+}
+
+.button-container>.btn-next {
+      background-color: var(--white);
+}
+
+.bg-light-blue {
+      background: linear-gradient(var(--light-blue) 70%, var(--white) 50%);
+}
+
+.bg-light-pink {
+      background: linear-gradient(var(--light-pink) 70%, var(--white) 50%);
+}
+
+.bg-light-gray {
+      background: linear-gradient(var(--light-gray) 70%, var(--white) 50%);
+}
+
+.bg-white {
+      background-color: var(--white);
+}
+
+.bg-navy {
+      background-color: var(--navy);
+}
+
+.bg-pink-dark {
+      background-color: var(--pink-dark);
+}
+
+.border-navy {
+      border: 1px solid var(--navy);
+}
+
+.border-pink-dark {
+      border: 1px solid var(--pink-dark);
+}
+
+.border-btn-navy {
+      border: 2px solid var(--navy);
+}
+
+.border-btn-pink-dark {
+      border: 2px solid var(--pink-dark);
+}
+
+.font-navy {
+      color: var(--navy);
+}
+
+.font-pink-dark {
+      color: var(--pink-dark);
+}
+
+
+/* animation */
+@keyframes pulse {
+
+      0%,
+      100% {
+            opacity: 0.8;
+      }
+
+      50% {
+            opacity: 0.3;
+      }
+}
+
+@media screen and (max-width:700px){
+      .card{
+            width:100%;
+            height:100%;
+      }
+      
+      .product-container{
+            width:100%;
+            height:100%;
+            flex-direction :column;
+            justify-content:center;
+            align-items:center;
+      }
+
+      .product-image{
+            display:flex;
+            justify-content:center;
+            align-items:center;
+      }
+
+      .product-details{
+            width : 100%;
+      }
+
+      .title{
+            font-size:18px;
+      }
+
+      .overlay{
+            margin-top:20%;
+            display:flex;
+            justify-content:center;
+            align-items:center;
+      }
+}
+  </style>
+  
